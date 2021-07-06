@@ -15,7 +15,6 @@ export class RoundResult {
   public constructor(
     public readonly order: number, // 用于折行后确认先后关系
     public readonly result: number,
-    public readonly tieCount: number,
     public readonly gameResult: GameResult,
     public readonly pairResult: PairResult,
   ) {}
@@ -27,7 +26,6 @@ export class RoundResult {
     return new RoundResult(
       source.order,
       source.result,
-      source.tieCount,
       source.gameResult,
       source.pairResult,
     );

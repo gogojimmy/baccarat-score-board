@@ -19,7 +19,7 @@ function generateBigRoadItemList(
 ): ReadonlyArray<BigRoadItem> {
   let arr = new Array<BigRoadItem>();
   roundResults.map((res, index) => {
-    if (res.gameResult === GameResult.Tie && index !== 0) {
+    if (res.gameResult === GameResult.Tie && arr[index - 1] !== undefined) {
       arr[index - 1].tieCount += 1;
     } else if (res.gameResult !== GameResult.Tie) {
       arr.push({
