@@ -2,12 +2,13 @@ import { GameResult, PairResult, RoundResult } from '../round-result';
 import { Road, RoadArray } from './road';
 import { wrapColumn, wrapRow } from './shared';
 
-export type BigRoadItem = Readonly<{
+export type BigRoadItem = {
   order: number; // 用于折行后确认先后关系
   result: number;
   gameResult: GameResult.BankerWin | GameResult.PlayerWin;
   pairResult: PairResult;
-}>;
+  tieCount: number;
+};
 
 /**
  * 根据baccaratItemList生成bigRoad所需一维数据
@@ -16,18 +17,23 @@ function generateBigRoadItemList(
   this: void,
   roundResults: ReadonlyArray<RoundResult>,
 ): ReadonlyArray<BigRoadItem> {
-  return roundResults
-    .map(res => {
-      return res.gameResult !== GameResult.Tie
-        ? {
-            order: res.order,
-            result: res.result,
-            gameResult: res.gameResult,
-            pairResult: res.pairResult,
-          }
-        : undefined;
-    })
-    .filter((result): result is BigRoadItem => typeof result !== 'undefined');
+  let arr = new Array<BigRoadItem>();
+  roundResults.map((res, index) => {
+    if (res.gameResult === GameResult.Tie && index !== 0) {
+      arr[index - 1].tieCount += 1;
+    } else if (res.gameResult !== GameResult.Tie) {
+      arr.push({
+        order: res.order,
+        result: res.result,
+        gameResult: res.gameResult,
+        tieCount: 0,
+        pairResult: res.pairResult,
+      });
+    }
+  });
+  return arr.filter(
+    (result): result is BigRoadItem => typeof result !== 'undefined',
+  );
 }
 
 /**
